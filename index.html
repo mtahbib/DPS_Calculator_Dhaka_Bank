@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Machine Details</title>
+    <!-- Include Tailwind CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        clifford: '#da373d',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-gray-100 flex flex-col min-h-screen ">
+    <!-- Navbar -->
+    <nav class="bg-blue-100 text-blue-800 p-4">
+        <div class="flex items-center justify-between">
+    
+            <!-- Logo on the left -->
+            <div class="flex items-center">
+               <a href="index.html"> <img src="https://dhakabankltd.com/wp-content/themes/dhakabankupdate/images/dbl-plc-logo.png" alt="Logo" class="h-8 mr-2"></a>
+             </div>
+             <a href="#" class="text-lg font-extrabold">Welcome To Dhaka Bank PLC</a>
+             
+            <!-- Navigation links on the right -->
+            <div class="flex items-center">
+                <a href="index.html" class="mr-4">Home</a>
+                <a href="about.html" class="mr-4">About</a>
+                <a href="contact.html" class="mr-4">Contact</a>
+            </div>
+        </div>
+    </nav>
+<body class="bg-gray-100 p-8 ">
+
+    <div class="max-w-md mx-auto bg-white p-6 rounded-md shadow-md mt-auto ">
+
+        <h1 class="text-2xl font-semibold mb-4">DPS Calculator</h1>
+
+        <form id="accrualForm">
+
+            <div class="mb-4">
+                <label for="years" class="block text-sm font-medium placeholder:Enter for how many years text-gray-600">Number of Years:</label>
+                <input type="number" id="years" name="years" class="mt-1 p-2 border rounded-md w-full" placeholder="Enter Number of years" required>
+            </div>
+
+            <div class="mb-4">
+                <label for="rate" class="block text-sm font-medium text-gray-600">Rate:</label>
+                <input type="number" step="0.01" id="rate" name="rate" class="mt-1 p-2 border rounded-md w-full" placeholder="Enter annual rate" required>
+            </div>
+
+            <div class="mb-4">
+                <label for="taxPercentage" class="block text-sm font-medium text-gray-600">Tax Percentage:</label>
+                <input type="number" step="0.01" id="taxPercentage" name="taxPercentage" class="mt-1 p-2 border rounded-md w-full" placeholder="Enter annual tax"required>
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-600">Principal Amounts for Each Month:</label>
+                <div id="principalInputs" class="mt-1 flex flex-wrap gap-2">
+            
+                </div>
+            </div>
+
+            <div class="mt-6">
+                <button type="button" onclick="generateInputs()" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Generate Inputs</button>
+                <button type="button" onclick="calculateAccrual()" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Calculate</button>
+            </div>
+
+        </form>
+
+        <div class="mt-8" id="result">
+            <!-- Result will be displayed here -->
+        </div>
+
+    </div>
+
+    <script>
+        function generateInputs() {
+            const years = parseInt(document.getElementById('years').value);
+
+            let principalInputs = '';
+            for (let i = 1; i <= years * 12; i++) {
+                principalInputs += `<input type="number" step="0.01" name="principal" id="principal_${i}" class="p-2 border rounded-md w-full">`;
+            }
+            document.getElementById('principalInputs').innerHTML = principalInputs;
+        }
+
+        function calculateAccrual() {
+            const rate = parseFloat(document.getElementById('rate').value);
+            const taxPercentage = parseFloat(document.getElementById('taxPercentage').value);
+            let totalPrincipal = 0;
+            let liquidation = 0;
+
+            for (let i = 1; i <= document.getElementsByName('principal').length; i++) {
+                const principal = parseFloat(document.getElementById(`principal_${i}`).value) || 0;
+                totalPrincipal += principal;
+                liquidation += (totalPrincipal * rate * 30) / 36000; // Updated accrual calculation
+            }
+
+            const tax = (taxPercentage / 100) * liquidation;
+            const net = liquidation - tax;
+            const maturity = totalPrincipal + net;
+
+            const resultHTML = `
+                <div class="mt-8">
+                    <p class="text-lg font-semibold">Total Principal: TK ${totalPrincipal.toFixed(2)}</p>
+                    <p class="text-lg font-semibold">Liquidation: TK${liquidation.toFixed(2)}</p>
+                    <p class="text-lg font-semibold">Tax: TK ${tax.toFixed(2)}</p>
+                    <p class="text-lg font-semibold">Net: TK ${net.toFixed(2)}</p>
+                    <p class="text-lg font-semibold">Maturity: TK ${maturity.toFixed(2)}</p>
+                </div>
+            `;
+            document.getElementById('result').innerHTML = resultHTML;
+        }
+    </script>
+
+</body>
+<footer class="bg-blue-100 text-blue-800 p-4 mt-auto">
+    <div class="text-center">
+        <p>&copy; 2023 Dhaka Bank PLC. All rights reserved.</p>
+    </div>
+</footer>
+</html>
