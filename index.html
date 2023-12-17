@@ -92,48 +92,50 @@
                 const years = parseInt(document.getElementById('years').value);
                 const installmentSize = parseFloat(document.getElementById('installmentSize').value);
                 const rate = parseFloat(document.getElementById('rate').value);
-     
-     
+        
+                // Validate inputs
+                if (years <= 0 || installmentSize <= 0 || rate <= 0) {
+                    alert("The Value cannot be negative!! Please enter a positive value!");
+                    return;
+                }
+        
                 const totalInstallments = years * 12;
                 const { maturity, totalPrincipal, totalProfit } = calculateMaturityAmount(installmentSize, rate, totalInstallments, years);
-     
-     
+                const totalTk=years*12*installmentSize
+        
                 const resultHTML = `
                     <div class="mt-8">
                         <p class="text-lg font-semibold">Maturity Amount: TK ${maturity.toFixed(2)}</p>
-                        <p class="text-lg font-semibold">Total Principal: TK ${totalPrincipal.toFixed(2)}</p>
+                        <p class="text-lg font-semibold">Principal Amount: TK ${totalTk.toFixed(2)}</p>
                         <p class="text-lg font-semibold">Total Profit: TK ${totalProfit.toFixed(2)}</p>
                     </div>
                 `;
                 document.getElementById('result').innerHTML = resultHTML;
             }
-     
-     
+        
             // total maturity amount, total principal, and total profit calculation
             function calculateMaturityAmount(installmentSize, rate, totalInstallments, years) {
                 let totalPrincipal = 0;
                 let totalAccrual = 0;
-     
-     
+                const totalTk=years*12*installmentSize
+        
                 for (let i = 1; i <= totalInstallments; i++) {
                     totalPrincipal += installmentSize;
                     totalAccrual += (totalPrincipal * rate * 30) / 36000;
-     
-     
+        
                     if (i % 12 === 0 && i < totalInstallments) {
                         totalPrincipal += totalAccrual;
                         totalAccrual = 0;
                     }
                 }
-     
-     
+        
                 const maturity = totalPrincipal + totalAccrual;
-                const totalProfit = maturity - totalPrincipal;
-     
-     
+                const totalProfit = maturity - totalTk;
+        
                 return { maturity, totalPrincipal, totalProfit };
             }
         </script>
+        
      
      
      </body>
@@ -143,5 +145,7 @@
        <footer class="bg-blue-100 text-blue-800 p-4 mt-auto">
         <div class="text-center">
             <p>&copy; 2023 Dhaka Bank PLC. All rights reserved.</p>
+            <br>
+            <p>Made By <a href="https://github.com/mtahbib">Tahbib Manzoor</a></p>
         </div>
     </footer>
